@@ -7,5 +7,5 @@
 ;Got this one from clojuredocs.org
 (defn fibo [a b] (lazy-seq (cons a (fibo b (+ a b)))))
 
-(defn p2 [l]
-	(reduce + (filter even? (take-while #(< % l) (fibo 0 1)))))
+(defn p2 [lim]
+	(reduce + (filter even? (take-while #(< % lim) (fibo 0 1)))))

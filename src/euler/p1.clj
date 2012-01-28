@@ -3,8 +3,8 @@
 
 (ns euler.p1)
 
-(defn p1 [x y l]
-	(let [make-seq (fn [a] (take-while #(< % l) (iterate #(+ % a) a)))
+(defn p1 [x y lim]
+	(let [make-seq (fn [a] (take-while #(< % lim) (iterate #(+ % a) a)))
 				not-multiple? (fn [a b] (not (zero? (rem a b))))]
 		(+ (reduce + (make-seq x)) 
 			 (reduce + (filter #(not-multiple? % x) (make-seq y))))))

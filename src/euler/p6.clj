@@ -8,6 +8,7 @@
   (:use [clojure.contrib.generic.math-functions :only (sqr)]))
 
 (defn diff [lim]
+  "lim = 100"
   (let [coll (range (inc lim))
         sum-squares (reduce + (map sqr coll))
         square-sum (sqr (reduce + coll))]

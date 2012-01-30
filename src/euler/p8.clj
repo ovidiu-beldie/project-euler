@@ -25,6 +25,7 @@
 71636269561882670428252483600823257530420752963450")
 
 (defn prod-of [n]
+  "n=5 for this problem"
   (let [groups-of (partition n 1 (remove (partial = \newline) x))
         prod (fn [g]
               (reduce * (map #(Integer/valueOf (str %)) g)))

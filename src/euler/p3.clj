@@ -5,6 +5,8 @@
   (:use [incanter.core :only (sqrt)]))
 
 (defn prime? [n inf-primes]
+  "Returns true if n is a prime. 
+   inf-primes is the sequence of primes inferior to n"
   (loop [ps inf-primes]
     (let [p (first ps)]
       (if (> p (sqrt n))
@@ -14,15 +16,18 @@
           (recur (next ps)))))))
 
 (defn next-prime [primes]
+  "Computes the next prime and adds it to the seq"
   (loop [x (inc (last primes))]
     (if (prime? x primes)
       (conj primes x)
       (recur (inc x)))))
   
 (defn primes []
+  "Infinite sequence of primes"
   (map last (iterate next-prime [2])))
 
 (defn factorize [n]
+  "Computes n's prime factors"
   (letfn [(least-fact [n]
             (first (drop-while #(not (zero? (rem n %))) (primes))))]
     (loop [x n, facts []]

@@ -5,8 +5,9 @@
   (:use [euler.p3 :only (factorize)]
         [incanter.core :only (pow)]))
 
-(defn lcd [coll]
-  (let [facts (map factorize (drop-while #(< % 2) coll))
-        histo (map frequencies facts)
-        highest-order-facts (apply merge-with max histo)]
+(defn p5 [coll]
+  "For this problem coll = (range 20)"
+  (let [facts (map factorize (drop-while #(< % 2) coll))  ; factorize seq members
+        histo (map frequencies facts)  ; compute primes' histogram
+        highest-order-facts (apply merge-with max histo)] ; get list of primes with max exponent
     (long (reduce * (map #(pow (key %) (val %)) highest-order-facts)))))

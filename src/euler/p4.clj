@@ -3,7 +3,8 @@
 
 (ns euler.p4)
 
-(defn palindrom? [n]
+(defn palindrome? [n]
+  "Tests if n is a palindrome"
   (loop [s (.toString n)]
     (if (< (count s) 2)
       true 
@@ -11,7 +12,8 @@
         false
         (recur (drop-last (next s)))))))
 
-(defn find-palindrom [low-lim up-lim]
+(defn find-palindrome [low-lim up-lim]
+  "For this problem low-lim = 900, up-lim = 999"
   (let [r (range low-lim up-lim)]
-    (apply max (filter palindrom? (for [x r, y r :when (< x y)] (* x y))))))
+    (apply max (filter palindrome? (for [x r, y r :when (< x y)] (* x y))))))
       

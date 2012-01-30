@@ -13,5 +13,5 @@
 
 (defn find-palindrom [low-lim up-lim]
   (let [r (range low-lim up-lim)]
-    (apply max (filter palindrom? (for [x r, y r] (* x y))))))
+    (apply max (filter palindrom? (for [x r, y r :when (< x y)] (* x y))))))
       

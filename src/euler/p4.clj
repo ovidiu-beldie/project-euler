@@ -4,14 +4,14 @@
 (ns euler.p4)
 
 (defn palindrom? [n]
-	(loop [s (.toString n)]
-		(if (< (count s) 2)
-			true 
-			(if (not= (first s) (last s))
-				false
-				(recur (drop-last (next s)))))))
+  (loop [s (.toString n)]
+    (if (< (count s) 2)
+      true 
+      (if (not= (first s) (last s))
+        false
+        (recur (drop-last (next s)))))))
 
 (defn find-palindrom [low-lim up-lim]
-	(let [r (range low-lim up-lim)]
-		(apply max (filter palindrom? (for [x r, y r] (* x y))))))
-			
+  (let [r (range low-lim up-lim)]
+    (apply max (filter palindrom? (for [x r, y r] (* x y))))))
+      

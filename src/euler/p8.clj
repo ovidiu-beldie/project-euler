@@ -25,8 +25,8 @@
 71636269561882670428252483600823257530420752963450")
 
 (defn prod-of [n]
-	(let [groups-of (partition n 1 (remove (partial = \newline) x))
-				prod (fn [g]
-							(reduce * (map #(Integer/valueOf (str %)) g)))
-				prods (map prod groups-of)]
-		(apply max prods)))
+  (let [groups-of (partition n 1 (remove (partial = \newline) x))
+        prod (fn [g]
+              (reduce * (map #(Integer/valueOf (str %)) g)))
+        prods (map prod groups-of)]
+    (apply max prods)))

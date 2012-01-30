@@ -2,9 +2,9 @@
 ;What is the 10 001st prime number?
 
 (ns euler.p7
-	(:use [euler.p3 :only (primes)]))
+  (:use [euler.p3 :only (primes)]))
 
 (defn get-prime [n]
-	(nth (primes) (dec n)))
+  (nth (primes) (dec n)))
 
 

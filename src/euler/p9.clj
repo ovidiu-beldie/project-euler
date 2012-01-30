@@ -5,23 +5,23 @@
 ;Find the product abc.
 
 (ns euler.p9
-	(:use [clojure.contrib.generic.math-functions :only (sqr)]
-				[incanter.core :only (sqrt)]))
+  (:use [clojure.contrib.generic.math-functions :only (sqr)]
+        [incanter.core :only (sqrt)]))
 
 (defn squares []
-	(lazy-seq (map sqr (iterate inc 1))))
+  (lazy-seq (map sqr (iterate inc 1))))
 
 (defn perf-square? [n]
-	(= n (sqr (bigint (sqrt n)))))
+  (= n (sqr (bigint (sqrt n)))))
 
 (defn pythag-triplets [lim]
-	(let [r (take lim (squares))]
-		(for [x r, y r 
-				:let [z (+ x y)]
-				:when (and (< x y) (perf-square? z))]	(map #(long (sqrt %)) [x y z]))))
+  (let [r (take lim (squares))]
+    (for [x r, y r 
+        :let [z (+ x y)]
+        :when (and (< x y) (perf-square? z))] (map #(long (sqrt %)) [x y z]))))
 
 (defn find-abc [lim sum]
-	(let [triplets (pythag-triplets lim)
-				t (first (filter #(= sum (apply + %)) triplets))]
-		(reduce * t)))
+  (let [triplets (pythag-triplets lim)
+        t (first (filter #(= sum (apply + %)) triplets))]
+    (reduce * t)))
 

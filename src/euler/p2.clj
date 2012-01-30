@@ -8,4 +8,4 @@
 (defn fibo [a b] (lazy-seq (cons a (fibo b (+ a b)))))
 
 (defn p2 [lim]
-	(reduce + (filter even? (take-while #(< % lim) (fibo 0 1)))))
+  (reduce + (filter even? (take-while #(< % lim) (fibo 0 1)))))

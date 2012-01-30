@@ -5,10 +5,10 @@
 ;Hence the difference between the sum of the squares of the first ten natural numbers and the square of the sum is 3025 − 385 = 2640.
 ;Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
 (ns euler.p6
-	(:use [clojure.contrib.generic.math-functions :only (sqr)]))
+  (:use [clojure.contrib.generic.math-functions :only (sqr)]))
 
 (defn diff [lim]
-	(let [coll (range (inc lim))
-				sum-squares (reduce + (map sqr coll))
-				square-sum (sqr (reduce + coll))]
-		(- square-sum sum-squares)))
+  (let [coll (range (inc lim))
+        sum-squares (reduce + (map sqr coll))
+        square-sum (sqr (reduce + coll))]
+    (- square-sum sum-squares)))

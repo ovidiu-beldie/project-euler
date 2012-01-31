@@ -2,8 +2,7 @@
 ;Find the sum of all the primes below two million.
 
 (ns euler.p10
-	(:use [euler.p3 :only (primes)]
-        [euler.profile :only (prof)]))
+	(:use [euler.p3 :only (primes)]))
 
 ;;; Using division testing
 (defn sum [lim]
@@ -23,29 +22,17 @@
 		0))  ; the only even prime is 2 and it's the first in the seq
 
 (defn find-next-prime [n s s-count]
-  (prof :find-next-prime
+  "Find the first prime superior to n in the sieve s"
   (loop [i (inc (index-of n))]
     (if (>= i s-count)
       nil
       (if (val (first (s i)))
         (key (first (s i)))
-        (recur (inc i)))))))
-    
-
-(comment
-(defn find-next-prime [n s]
-  "Find the first prime superior to n in the sieve s"
-  (prof :find-next-prime
-	(let [nh (drop (inc (index-of n)) s)		  ; seq of ints sup to n; index of n is (n+1)/2
-				r (drop-while #(false? (val (first %))) nh)]
-    (if (empty? r)
-      nil
-		  (key (ffirst r)))))))
+        (recur (inc i))))))
 
 (defn mark-multiples [n si si-count]
   "Marks all the multiples of n in the sieve si
    which has si-count elements"
-  (prof :mark-multiples
 	(let [index-n (index-of n)]
 		(loop [i (+ index-n n), s si]
 			(if (>= i si-count)
@@ -55,7 +42,7 @@
 				          (let [marked {(key (first (s i))), false}]
                     (assoc s i marked))
                 s)]
-					(recur (+ i n), si)))))))
+					(recur (+ i n), si))))))
 
 (defn sieve [lim]
   "Sieve up to lim (e.g. 2000000)"
@@ -64,7 +51,6 @@
 			  si-count (count si)]
 		(loop [s si, old-n 2]
 			(let [n (find-next-prime old-n s si-count)]
-            ;_ (prn "prime=" n)]
 				(if (nil? n)
 					(map #(key (first %)) (filter #(val (first %)) s))
 					(recur (mark-multiples n s si-count) n))))))

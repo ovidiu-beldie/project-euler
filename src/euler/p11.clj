@@ -36,14 +36,12 @@
 
 (defn build-matrix [m-str]
   "Build the bidimensional array from its string representation"
-  ;(loop [m [], ms m-str, i 0]
   (loop [m [], ms m-str]
     (let [not-newline? (fn [c] (not (= \newline c)))
           drop-row (fn [c] (drop 1 (drop-while not-newline? c)))
           row (take-while not-newline? ms)]
       (if (empty? row)
         m
-        ;(recur (assoc m i (make-row row)), (drop-row ms), (inc i))))))
         (recur (conj m (make-row row)) (drop-row ms))))))
 
 (defn prod-vec-part [v group-size]
@@ -51,19 +49,16 @@
    size group-size from the vector v"
   (if (< (count v) group-size)
     (reduce * v)
-    (let [groups (partition group-size 1 v);]
-          _ (prn "v=" v)
-          _ (prn "groups=" groups)]
+    (let [groups (partition group-size 1 v)]
+          ;_ (prn "v=" v)
+          ;_ (prn "groups=" groups)]
       (apply max (map (partial reduce *) groups)))))
 
 (defn max-prod-rows [m]
-  (do
-  (prn "max-prod-rows, m=" m)
-  (apply max (map #(prod-vec-part % 4) m))))
+  (apply max (map #(prod-vec-part % 4) m)))
 
 (defn vert [original-m]
   ""
-  ;(loop [m original-m, vm [], i 0]
   (loop [m original-m, vm []]
     (if (empty? (first m))
       vm
@@ -80,122 +75,49 @@
   "Checks if index is out of the bounds of the sqaure" 
   (or (< i 0) (>= i (* n n))))
 
-(defn make-diag-a [vect index-start dir n]
-  (let [op ({:up -, :down +} dir)]
-        ;_ (prn )
-        ;_ (prn )
-        ;_ (prn "enter make-diag, index-start=" index-start)] 
-    (loop [i index-start, diag []]
-      (if (out-of-bounds? i n)
-        (do
-          ;(prn "diag compl=" diag)
-          ;diag)
-          (take n  diag))
-        (do
-          ;(prn "diag=" diag)
-          ;(prn "i=" i "e=" (vect i))
-        (recur (op i (dec n)) (conj diag (vect i))))))))
-
-(defn make-diag-b [vect index-start dir n]
-  (let [op ({:up -, :down +} dir)
-        out-of-bounds? (fn [i] (or (< i 0) (>= i (* n n))))]
-        ;_ (prn )
-        ;_ (prn )
-        ;_ (prn "enter make-diag, index-start=" index-start)] 
-    (loop [i index-start, diag []]
-      (if (out-of-bounds? i)
-        (do
-          ;(prn "diag compl=" diag)
-          ;diag)
-          (take n  diag))
-        (do
-          ;(prn "diag=" diag)
-          ;(prn "i=" i "e=" (vect i))
-        (recur (op i (inc n)) (conj diag (vect i))))))))
 
 (defn make-diag [vect index-start diag-type dir n]
   (let [op ({:up -, :down +} dir)
-        delta-op ({:a dec, :b inc} diag-type)]
-        ;_ (prn )
-        ;_ (prn )
-        ;_ (prn "enter make-diag, index-start=" index-start)] 
+        delta-op ({:a inc, :b dec} diag-type)
+        _ (prn "make-diag i-start=" index-start "diag-type=" diag-type "dir=" dir)]
     (loop [i index-start, diag []]
       (if (out-of-bounds? i n)
         (do
-          ;(prn "diag compl=" diag)
-          ;diag)
+          (prn "make-diag ret=" (take n  diag))
           (take n  diag))
         (do
-          ;(prn "diag=" diag)
-          ;(prn "i=" i "e=" (vect i))
+        (prn "i=" i "vect(i)=" (vect i) "diag=" diag)
         (recur (op i (delta-op n)) (conj diag (vect i))))))))
 
-(comment
-(defn upwards-1st-col [vect n]
-  (loop [i 0, a []]
-    ;(if (= i (* n n))
-    (if (out-of-bounds? i n) 
-      (do
-        (prn "upwards-1st-col ret=" a)
-        a)
-      (do
-        ;(prn "i=" i)
-        (recur (+ i n), (conj a (make-diag-a vect i :up n)))))))
-
-(defn downwards-last-col [vect n]
-  (loop [i (dec n), a[]]
-    (if (out-of-bounds? i n)
-      (do
-      (prn "downwards-last-col=" a)
-      a)
-      (recur (+ i n), (conj a (make-diag-a vect i :down n))))))
-
-(defn downwards-1st-col [vect n]
-  (loop [i 0, a []]
-    (if (out-of-bounds? i n)
-      (do
-      (prn "downwards-1st-col=" a)
-      a)
-      (recur (+ i n) (conj a (make-diag-b vect i :down n))))))
-
-(defn upwards-last-col [vect n]
-  (loop [i (dec n), a []]
-    (if (>= i (* n n))
-      (do
-      (prn "upwards-last-col=" a)
-      a)
-      (recur (+ i n) (conj a (make-diag-b vect i :up n))))))))
-
-(defn make-diag-seq [vect n i-init t dir]
+(defn make-diag-half-seq [vect n diag-type i-init dir]
   (loop [i i-init, a []]
     (if (out-of-bounds? i n)
       (do
-      (prn "diag-seq=" a)
+      (prn "diag-seq of type:" diag-type "dir:" dir "=" a)
       a)
-      (recur (+ i n) (conj a (make-diag vect i t dir n))))))
-  
-(defn diag-a [vect n]
-  "Diagonal starting on the left and descending to the right"
-;  (let [v []]
-    ;(apply conj (upwards-1st-col vect n) (downwards-last-col vect n))) 
-    (apply conj (make-diag-seq vect n 0 :a :up) (make-diag-seq vect n (dec n) :a :down))) 
+      (recur (+ i n) (conj a (make-diag vect i diag-type dir n))))))
 
-(defn diag-b [vect n]
+(defn make-diag-seq [vect n diag-type]
   "Diagonal starting on the left and descending to the right"
     ;(apply conj (downwards-1st-col vect n) (upwards-last-col vect n))) 
-    (apply conj (make-diag-seq vect n 0 :b :down) (make-diag-seq vect n (dec n) :b :up))) 
-
+  (let [diag-maker (partial make-diag-half-seq vect n diag-type)
+        index-start-down ({:a 0, :b (dec n)} diag-type)  
+        index-start-up ({:a (dec n), :b 0} diag-type)]
+    (apply conj (diag-maker index-start-down :down) (diag-maker index-start-up :up))))
+    ;(apply conj (diag-maker 0 :down) (diag-maker (dec n) :up))))
+    ;(apply conj (make-diag-seq vect n 0 :b :down) (make-diag-seq vect n (dec n) :b :up))) 
 
 (defn prod []
   (let [m (build-matrix matrix-as-str)
         n (count m)
         m-as-vect (transf-matrix-to-vec m)
-        da (diag-a m-as-vect n)
-        ;_ (prn "da=" da)
+        ;da (diag-a m-as-vect n)
+        da (make-diag-seq m-as-vect n :a)
+        _ (prn "da=" da)
         ;_ (prn "max prod row=" (max-prod-rows da))
-        db (diag-b m-as-vect n)
+        ;db (diag-b m-as-vect n)
+        db (make-diag-seq m-as-vect n :b)
         _ (prn "db=" db)
-        _ (prn "Done printing db")
         ;_ (prn "max prod row=" (max-prod-rows db))
         ;_ (prn "a=" a)
         ;_ (prn "vert-a=" (vert a))

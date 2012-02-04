@@ -76,14 +76,17 @@
       v
       (recur (drop 1 m) (apply conj v (first m))))))
 
+(defn out-of-bounds? [i n]
+  "Checks if index is out of the bounds of the sqaure" 
+  (or (< i 0) (>= i (* n n))))
+
 (defn make-diag-a [vect index-start dir n]
-  (let [op ({:up -, :down +} dir)
-        out-of-bounds? (fn [i] (or (< i 0) (>= i (* n n))))]
+  (let [op ({:up -, :down +} dir)]
         ;_ (prn )
         ;_ (prn )
         ;_ (prn "enter make-diag, index-start=" index-start)] 
     (loop [i index-start, diag []]
-      (if (out-of-bounds? i)
+      (if (out-of-bounds? i n)
         (do
           ;(prn "diag compl=" diag)
           ;diag)
@@ -110,9 +113,28 @@
           ;(prn "i=" i "e=" (vect i))
         (recur (op i (inc n)) (conj diag (vect i))))))))
 
+(defn make-diag [vect index-start diag-type dir n]
+  (let [op ({:up -, :down +} dir)
+        delta-op ({:a dec, :b inc} diag-type)]
+        ;_ (prn )
+        ;_ (prn )
+        ;_ (prn "enter make-diag, index-start=" index-start)] 
+    (loop [i index-start, diag []]
+      (if (out-of-bounds? i n)
+        (do
+          ;(prn "diag compl=" diag)
+          ;diag)
+          (take n  diag))
+        (do
+          ;(prn "diag=" diag)
+          ;(prn "i=" i "e=" (vect i))
+        (recur (op i (delta-op n)) (conj diag (vect i))))))))
+
+(comment
 (defn upwards-1st-col [vect n]
   (loop [i 0, a []]
-    (if (= i (* n n))
+    ;(if (= i (* n n))
+    (if (out-of-bounds? i n) 
       (do
         (prn "upwards-1st-col ret=" a)
         a)
@@ -122,7 +144,7 @@
 
 (defn downwards-last-col [vect n]
   (loop [i (dec n), a[]]
-    (if (> i (* n n))
+    (if (out-of-bounds? i n)
       (do
       (prn "downwards-last-col=" a)
       a)
@@ -130,7 +152,7 @@
 
 (defn downwards-1st-col [vect n]
   (loop [i 0, a []]
-    (if (>= i (* n n))
+    (if (out-of-bounds? i n)
       (do
       (prn "downwards-1st-col=" a)
       a)
@@ -142,20 +164,26 @@
       (do
       (prn "upwards-last-col=" a)
       a)
-      (recur (+ i n) (conj a (make-diag-b vect i :up n))))))
+      (recur (+ i n) (conj a (make-diag-b vect i :up n))))))))
 
-
+(defn make-diag-seq [vect n i-init t dir]
+  (loop [i i-init, a []]
+    (if (out-of-bounds? i n)
+      (do
+      (prn "diag-seq=" a)
+      a)
+      (recur (+ i n) (conj a (make-diag vect i t dir n))))))
   
 (defn diag-a [vect n]
   "Diagonal starting on the left and descending to the right"
 ;  (let [v []]
-    ;(apply conj v (upwards-1st-col vect n) (right-last-row vect n)))) 
-    (apply conj (upwards-1st-col vect n) (downwards-last-col vect n))) 
+    ;(apply conj (upwards-1st-col vect n) (downwards-last-col vect n))) 
+    (apply conj (make-diag-seq vect n 0 :a :up) (make-diag-seq vect n (dec n) :a :down))) 
 
 (defn diag-b [vect n]
   "Diagonal starting on the left and descending to the right"
-    ;(apply conj v (upwards-1st-col vect n) (right-last-row vect n)))) 
-    (apply conj (downwards-1st-col vect n) (upwards-last-col vect n))) 
+    ;(apply conj (downwards-1st-col vect n) (upwards-last-col vect n))) 
+    (apply conj (make-diag-seq vect n 0 :b :down) (make-diag-seq vect n (dec n) :b :up))) 
 
 
 (defn prod []

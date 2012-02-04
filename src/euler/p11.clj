@@ -49,16 +49,18 @@
    size group-size from the vector v"
   (if (< (count v) group-size)
     (reduce * v)
-    (let [groups (partition group-size 1 v)]
-          ;_ (prn "v=" v)
-          ;_ (prn "groups=" groups)]
+    (let [groups (partition group-size 1 v);]
+          _ (prn "v=" v)
+          _ (prn "groups=" groups)]
       (apply max (map (partial reduce *) groups)))))
 
-(defn max-prod-rows [m]
-  (apply max (map #(prod-vec-part % 4) m)))
+(defn max-prod-rows [g-size m]
+  "Computes the maximum product of all the g-size groups of ints
+    from the seq of vectors m"
+  (apply max (map #(prod-vec-part % g-size) m)))
 
-(defn vert [original-m]
-  ""
+(defn transpose [original-m]
+  "Transposes a matrix"
   (loop [m original-m, vm []]
     (if (empty? (first m))
       vm
@@ -66,6 +68,7 @@
         (recur (map (partial drop 1) m), (conj vm row)))))) 
 
 (defn transf-matrix-to-vec [matrix]
+  "Creates a unidimensional representation of the matrix"
   (loop [m matrix, v []]
     (if (empty? (first m))
       v
@@ -77,6 +80,11 @@
 
 
 (defn make-diag [vect index-start diag-type dir n]
+  "Creates a diagonal with values from a matrix of size n
+   represented as the vector vect. 
+   index-start is the unidimensional index of the start element of the diagonal. 
+   diag-type is the type of diagonal (see below)
+   dir is the direction to follow to create the dialog"
   (let [op ({:up -, :down +} dir)
         delta-op ({:a inc, :b dec} diag-type)
         _ (prn "make-diag i-start=" index-start "diag-type=" diag-type "dir=" dir)]
@@ -90,6 +98,12 @@
         (recur (op i (delta-op n)) (conj diag (vect i))))))))
 
 (defn make-diag-half-seq [vect n diag-type i-init dir]
+  "Creates a sequence of diagonals of type diag-type for a matrix of size n
+   reprsented as the vector vect. The series of diagonals are created by 
+   looping through all the values of either the first or the last column
+   add forming a diagonal by taking neighbours either upwards or downwards.
+   i-init is the index of first value on either the first or last column
+   and dir is the direction to take to form columns (:up or :down)"
   (loop [i i-init, a []]
     (if (out-of-bounds? i n)
       (do
@@ -98,14 +112,13 @@
       (recur (+ i n) (conj a (make-diag vect i diag-type dir n))))))
 
 (defn make-diag-seq [vect n diag-type]
-  "Diagonal starting on the left and descending to the right"
-    ;(apply conj (downwards-1st-col vect n) (upwards-last-col vect n))) 
+  "Make a sequence of diagonals from a matrix of size n.
+   vect is the matrix represented as a vector.
+   The diagonals can be of type :a - NW->SE of :b - NE -> SW"
   (let [diag-maker (partial make-diag-half-seq vect n diag-type)
         index-start-down ({:a 0, :b (dec n)} diag-type)  
         index-start-up ({:a (dec n), :b 0} diag-type)]
     (apply conj (diag-maker index-start-down :down) (diag-maker index-start-up :up))))
-    ;(apply conj (diag-maker 0 :down) (diag-maker (dec n) :up))))
-    ;(apply conj (make-diag-seq vect n 0 :b :down) (make-diag-seq vect n (dec n) :b :up))) 
 
 (defn prod []
   (let [m (build-matrix matrix-as-str)
@@ -120,10 +133,11 @@
         _ (prn "db=" db)
         ;_ (prn "max prod row=" (max-prod-rows db))
         ;_ (prn "a=" a)
-        ;_ (prn "vert-a=" (vert a))
-        ;dirs [m (vert m) da db]
-        dirs [m (vert m) da db]]
+        ;_ (prn "transpose-a=" (vert a))
+        ;dirs [m (transpose m) da db]
+        max-prod (partial max-prod-rows 4)
+        dirs [m (transpose m) da db]]
         ;_ (prn "dirs=" dirs)]
         ;_ (prn "vec=" m-as-vect)
-    (apply max (map max-prod-rows dirs))))
+    (apply max (map max-prod dirs))))
 

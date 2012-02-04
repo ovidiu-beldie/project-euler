@@ -49,9 +49,7 @@
    size group-size from the vector v"
   (if (< (count v) group-size)
     (reduce * v)
-    (let [groups (partition group-size 1 v);]
-          _ (prn "v=" v)
-          _ (prn "groups=" groups)]
+    (let [groups (partition group-size 1 v)]
       (apply max (map (partial reduce *) groups)))))
 
 (defn max-prod-rows [g-size m]
@@ -86,16 +84,11 @@
    diag-type is the type of diagonal (see below)
    dir is the direction to follow to create the dialog"
   (let [op ({:up -, :down +} dir)
-        delta-op ({:a inc, :b dec} diag-type)
-        _ (prn "make-diag i-start=" index-start "diag-type=" diag-type "dir=" dir)]
+        delta-op ({:a inc, :b dec} diag-type)]
     (loop [i index-start, diag []]
       (if (out-of-bounds? i n)
-        (do
-          (prn "make-diag ret=" (take n  diag))
-          (take n  diag))
-        (do
-        (prn "i=" i "vect(i)=" (vect i) "diag=" diag)
-        (recur (op i (delta-op n)) (conj diag (vect i))))))))
+        (take n  diag)
+        (recur (op i (delta-op n)) (conj diag (vect i)))))))
 
 (defn make-diag-half-seq [vect n diag-type i-init dir]
   "Creates a sequence of diagonals of type diag-type for a matrix of size n
@@ -106,9 +99,7 @@
    and dir is the direction to take to form columns (:up or :down)"
   (loop [i i-init, a []]
     (if (out-of-bounds? i n)
-      (do
-      (prn "diag-seq of type:" diag-type "dir:" dir "=" a)
-      a)
+      a
       (recur (+ i n) (conj a (make-diag vect i diag-type dir n))))))
 
 (defn make-diag-seq [vect n diag-type]
@@ -124,20 +115,9 @@
   (let [m (build-matrix matrix-as-str)
         n (count m)
         m-as-vect (transf-matrix-to-vec m)
-        ;da (diag-a m-as-vect n)
         da (make-diag-seq m-as-vect n :a)
-        _ (prn "da=" da)
-        ;_ (prn "max prod row=" (max-prod-rows da))
-        ;db (diag-b m-as-vect n)
         db (make-diag-seq m-as-vect n :b)
-        _ (prn "db=" db)
-        ;_ (prn "max prod row=" (max-prod-rows db))
-        ;_ (prn "a=" a)
-        ;_ (prn "transpose-a=" (vert a))
-        ;dirs [m (transpose m) da db]
         max-prod (partial max-prod-rows 4)
         dirs [m (transpose m) da db]]
-        ;_ (prn "dirs=" dirs)]
-        ;_ (prn "vec=" m-as-vect)
     (apply max (map max-prod dirs))))
 

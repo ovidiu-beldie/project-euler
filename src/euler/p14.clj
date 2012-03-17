@@ -14,6 +14,8 @@
 
 (ns euler.p14)
 
+;; First version which I thought would be optimized but it turned out it wasn't
+
 (def chains (ref {}))
 
 (defn comp-chain [number]
@@ -28,11 +30,26 @@
           (recur (/ n 2) (inc chain-length))
           (recur (inc (* 3 n)) (inc chain-length)))))))
     
-(defn p14 [max-val]
+(defn p14-1 [max-val]
   (do 
     (dorun (map comp-chain (drop 1 (range (inc max-val)))))
     (prn (first (last (sort-by second @chains))))))
     
+;; Second version which runs a lot faster
     
+(defn chain-length [number]
+  (loop [n number, len 0]
+    (if (= 1 n)
+      len
+      (if (even? n)
+        (recur (/ n 2) (inc len))
+        (recur (inc (* 3 n)) (inc len))))))
 
-
+(defn p14-2 [max-val]
+  (loop [i 1, max-len 0, max-len-val 1]
+    (if (= i (inc max-val))
+      max-len-val
+      (let [l (chain-length i)
+            new-max-len (if (> l max-len) l max-len)
+            new-max-len-val (if (> l max-len) i max-len-val)]
+        (recur (inc i) new-max-len new-max-len-val)))))

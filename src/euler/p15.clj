@@ -8,7 +8,7 @@
 (defn factorials[]
   (map second (iterate (fn [[i n]] [(inc i) (* (bigint i) n)]) [1 1])))
 
-; This is a combinatorics / Pascal's traiangle problem
+; This is a combinatorics / Pascal's triangle problem
 (defn p15 []
   (let [fact-20 (nth (factorials) 20)]
     (/ (nth (factorials) 40) fact-20 fact-20)))

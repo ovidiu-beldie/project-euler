@@ -1,14 +1,18 @@
 ;The prime factors of 13195 are 5, 7, 13 and 29.
 ;What is the largest prime factor of the number 600851475143?
 
-(defn lpf
-  [num]
-  (let [div? (fn [n d] (zero? (mod n d)))] ;divisible predicate
-    (loop [n num, d 2]
-      (cond
-       (> d (Math/sqrt n)) n
-       (div? n d) (recur (/ n d) 2)
-       :else (recur n (inc d))))))
+(defn p3
+  "Solution to P3. This could have used the 'factorize' function
+but the whole point is to exercise..."
+  ([] (p3 600851475143))
+  ([num]
+     (let [div? (fn [n d] (zero? (mod n d)))] ;divisible predicate
+       ;the loop extracts the prime factors by repeated division starting at 2
+       (loop [n num, d 2]
+         (cond
+          (> d (Math/sqrt n)) n
+          (div? n d) (recur (/ n d) 2)
+          :else (recur n (inc d)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

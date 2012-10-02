@@ -4,13 +4,13 @@
 ;By considering the terms in the Fibonacci sequence whose values do not exceed four million,
 ;find the sum of the even-valued terms.
 
-(use 'euler.fibo)
+(use '[euler.fibo :only (fibo)])
 
 (defn p2
   "Solution to P2"
   ([] (p2 (* 4e6)))
   ([lim]
-     (->> (fibo-1)
+     (->> (fibo)
           (take-while #(< % lim))
           (filter even?)
           (reduce +))))
@@ -18,8 +18,8 @@
 ;;; First version (around march 2012)
 
 ;Got this one from clojuredocs.org
-(defn fibo [a b] (lazy-seq (cons a (fibo b (+ a b)))))
+(defn fibonacci [a b] (lazy-seq (cons a (fibonacci b (+ a b)))))
 
 (defn p2-1st [lim]
   "lim = 4000000"
-  (reduce + (filter even? (take-while #(< % lim) (fibo 0 1)))))
+  (reduce + (filter even? (take-while #(< % lim) (fibonacci 0 1)))))

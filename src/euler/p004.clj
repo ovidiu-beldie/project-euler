@@ -4,7 +4,8 @@
 (use '[euler.palindrome :only (palindrome?)])
 
 (defn p4
-  "Solution to P4"
+  "Solution to P4.Makes the (optimizing) assumption that
+ the 2 factors are higher than 800"
   []
   (let [prods (for [x (range 800 1000) y (range 800 x)] (* x y))]
     (apply max (filter palindrome? prods))))

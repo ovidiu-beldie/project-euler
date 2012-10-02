@@ -9,6 +9,8 @@
   (let [prods (for [x (range 800 1000) y (range 800 x)] (* x y))]
     (apply max (filter palindrome? prods))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;; Earlier version (march 2012)
 
 (defn palindrome-1? [n]

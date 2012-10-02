@@ -10,6 +10,7 @@
        (div? n d) (recur (/ n d) 2)
        :else (recur n (inc d))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Earlier version (around march 2012)
 

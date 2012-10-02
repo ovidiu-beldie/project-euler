@@ -15,6 +15,8 @@
           (filter even?)
           (reduce +))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; First version (around march 2012)
 
 ;Got this one from clojuredocs.org

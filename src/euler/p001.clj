@@ -7,6 +7,10 @@
   ([x y lim]
      (reduce + (into (apply hash-set (range 3 1000 3)) (apply hash-set (range 5 1000 5))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Previous solution
+
 (defn p1-1 [x y lim]
   "For this particular problem x=3, y=5, lim=1000"
   (let [make-seq (fn [a] (take-while #(< % lim) (iterate #(+ % a) a)))

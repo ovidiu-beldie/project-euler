@@ -20,7 +20,7 @@ but the whole point is to exercise..."
 
 ;;; Earlier version (around march 2012)
 
-(defn prime? [n inf-primes]
+(defn prime-p3? [n inf-primes]
   "Returns true if n is a prime.
    inf-primes is the sequence of primes inferior to n"
   (loop [ps inf-primes]
@@ -31,21 +31,21 @@ but the whole point is to exercise..."
           false
           (recur (next ps)))))))
 
-(defn next-prime [primes]
+(defn next-prime-p3 [primes]
   "Computes the next prime and adds it to the seq"
   (loop [x (inc (last primes))]
-    (if (prime? x primes)
+    (if (prime-p3? x primes)
       (conj primes x)
       (recur (inc x)))))
 
-(defn primes []
+(defn primes-p3 []
   "Infinite sequence of primes"
-  (map last (iterate next-prime [2])))
+  (map last (iterate next-prime-p3 [2])))
 
 (defn factorize-p3 [n]
   "Computes n's prime factors"
   (letfn [(least-fact [n]
-            (first (drop-while #(not (zero? (rem n %))) (primes))))]
+            (first (drop-while #(not (zero? (rem n %))) (primes-p3))))]
     (loop [x n, facts []]
       (let [f (least-fact x)]
         (if (> f x)

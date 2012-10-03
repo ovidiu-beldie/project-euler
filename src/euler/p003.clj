@@ -1,6 +1,8 @@
 ;The prime factors of 13195 are 5, 7, 13 and 29.
 ;What is the largest prime factor of the number 600851475143?
 
+(ns euler.p003)
+
 (defn p3
   "Solution to P3. This could have used the 'factorize' function
 but the whole point is to exercise..."
@@ -40,7 +42,7 @@ but the whole point is to exercise..."
   "Infinite sequence of primes"
   (map last (iterate next-prime [2])))
 
-(defn factorize [n]
+(defn factorize-p3 [n]
   "Computes n's prime factors"
   (letfn [(least-fact [n]
             (first (drop-while #(not (zero? (rem n %))) (primes))))]

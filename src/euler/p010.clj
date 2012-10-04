@@ -1,12 +1,25 @@
 ;The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 ;Find the sum of all the primes below two million.
 
-(ns euler.p10
-  (:use [euler.p3 :only (primes)]))
+(use '[euler.primes :only (primes-sieve)])
+(use '[euler.p003 :only (primes-p3)])
+
+;; Current solution of Erathostene's sieve slightly underperfoms
+;; my first attempt but it's clearer and more functional
+
+(defn p10
+  "Solution to P10"
+  ([] (p10 2e6))
+  ([lim]
+     (reduce + (primes-sieve lim))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Previous attempt (march 2012)
 
 ;;; Using division testing
 (defn sum [lim]
-  (reduce + (take-while #(< % lim) (primes))))
+  (reduce + (take-while #(< % lim) (primes-p3))))
 
 
 ;;; Using Eratosthenes's sieve

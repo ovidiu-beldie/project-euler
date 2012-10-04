@@ -11,7 +11,6 @@
   "Returns the first prime which is greater than n"
   [n]
   (loop [x (inc n)]
-    ;(do (prn "x=" x))
     (if (prime? x) x (recur (inc x)))))
 
 (defn- primes-by-divs

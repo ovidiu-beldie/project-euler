@@ -1,4 +1,5 @@
-;A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99.
+;A palindromic number reads the same both ways. The largest palindrome made from the product
+;of two 2-digit numbers is 9009 = 91 × 99.
 ;Find the largest palindrome made from the product of two 3-digit numbers.
 
 (use '[euler.palindrome :only (palindrome?)])
@@ -7,7 +8,7 @@
   "Solution to P4.Makes the (optimizing) assumption that
  the 2 factors are higher than 800"
   []
-  (let [prods (for [x (range 800 1000) y (range 800 x)] (* x y))]
+  (let [prods (for [x (range 1000 99 -1) y (range 1000 x -1)] (* x y))]
     (apply max (filter palindrome? prods))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

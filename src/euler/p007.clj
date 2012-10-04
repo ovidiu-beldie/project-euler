@@ -2,13 +2,13 @@
 ;is 13.
 ;What is the 10 001st prime number?
 
-(use '[euler.primes :only (nth-prime)])
+(use '[euler.primes :only (primes-div)])
 (use '[euler.p003 :only (primes-p3)])
 
 (defn p7
   "Solution to P7"
   ([] (p7 10001))
-  ([n] (nth-prime (dec n))))
+  ([n] (nth primes-div (dec n))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

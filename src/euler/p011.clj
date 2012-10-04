@@ -2,12 +2,10 @@
 
 ;The product of these numbers is 26 × 63 × 78 × 14 = 1788696.
 
-;What is the greatest product of four adjacent numbers in any direction (up, down, left, right, or diagonally) in the 20×20 grid?
+;What is the greatest product of four adjacent numbers in any direction (up, down, left,
+;right, or diagonally) in the 20×20 grid?
 
-(ns euler.p11
-  (:use [clojure.contrib.generic.math-functions :only (sqr)]))
-
-(def matrix-as-str 
+(def the-matrix 
  "08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
   49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00
   81 49 31 73 55 79 14 29 93 71 40 67 53 88 30 03 49 13 36 65
@@ -28,6 +26,94 @@
   20 69 36 41 72 30 23 88 34 62 99 69 82 67 59 85 74 04 36 16
   20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54
   01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48")
+
+(require '[clojure.string :as str])
+
+(declare format-matrix directional-delta)
+
+(defn p11
+  "Solution to P11"
+  ([] (p11 4))
+  ([n]
+     (let [m (format-matrix)
+           [max_id_rows max_id_cols] (key (last m))
+           ev? (partial elems-valid? (inc max_id_rows) (inc max_id_cols))]
+       (apply max (for [e m, d directional-delta
+                        :let [elems (select-elems (key e) n d)]
+                        :when (ev? elems)]
+                    (apply * (map (partial get m) elems)))))))
+
+(def directional-delta
+  "Defines an incremental movement in any of the 4 directions:
+0°, -90°, -45°, -135° (using a trigonometric circle reference)"
+  [[0 1] [1 0] [1 1] [1 -1]])
+
+(defn next-elem
+  "Takes the deltas for a direction and the current element's coord's.
+Returns the coord's of the next element in the designated direction"
+  [[delta-row delta-col] [row col]]
+  [(+ row delta-row) (+ col delta-col)])
+
+(defn select-elems
+  "Takes a starting element, the number of elements to select
+and the direction where to take next elem's from. Returns the
+coordinates of the selected elem's. These coordinates MAY be
+out of bounds of the matrix on either side and thus must be validated."
+  [start-elem n dir]
+  (take n (iterate (partial next-elem dir) start-elem)))
+
+(defn elems-valid?
+  "Takes the nb of rows and cols and some elements' coord's.
+Verifies if the elem's are within the matrix's bounds."
+  [rows cols elems]
+  (let [lower-than-max? (fn [[row-id col-id]]
+                   (and (< row-id rows) (< col-id cols)))]
+    (if (some neg? (flatten elems))
+      false
+      (every? lower-than-max? elems))))
+
+
+;; Process matrix from a string to a map representation
+
+(defn assoc-coords-to-val
+  "Takes a map entry which associates a row's index
+with its content (a seq). Produces a seq of elements
+of the form '[[row col] val]'"
+  [[row-ind row-vals]] 
+  (let [indexed-entry (fn [i [j v]]
+                        [[i j] v])]
+    (->> (interleave (iterate inc 0) row-vals)
+         (apply sorted-map)
+         (seq)
+         (map (partial indexed-entry row-ind)))))
+
+(defn format-matrix
+  "Takes the string version of the matrix and creates a seq
+of maps, each representing an element (including its cartesian
+coordinates"
+  ([] (format-matrix the-matrix))
+  ([mat]
+   (let [split-row (fn [v] (str/split (first v) #"\s")) ;
+         str-to-int (fn [v] (map #(Integer/valueOf %) v))]
+     (->> mat
+          str/split-lines                ;1 str per row
+          (map str/trim)                 
+          (map list)                     ;put each row in a list
+          (map split-row)                ;split row str in 1 str per number
+          (map str-to-int)               ;convert the numbers from str to int
+          (interleave (iterate inc 0))   ;index the seq of rows
+          (apply sorted-map)             ;create a map with the row index as key and row as val
+          (map assoc-coords-to-val)      
+          (reduce into)                  ;merge row into 1 seq
+          (reduce into)                  ;merge all element vec into one
+          (apply sorted-map)))))         ;create map with entry: '[row col] val'
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Previous solution (march 2012)
 
 (defn make-row [r]
   "Creates a vector of ints from a list of seqs containing the int digits"
@@ -112,7 +198,7 @@
     (apply conj (diag-maker index-start-down :down) (diag-maker index-start-up :up))))
 
 (defn prod []
-  (let [m (build-matrix matrix-as-str)
+  (let [m (build-matrix the-matrix)
         n (count m)
         m-as-vect (transf-matrix-to-vec m)
         da (make-diag-seq m-as-vect n :a)

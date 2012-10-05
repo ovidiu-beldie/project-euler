@@ -2,8 +2,22 @@
 
 ;What is the sum of the digits of the number 2^1000?
 
-(ns euler.p16
-  (:use [clojure.contrib.math :only (expt)]))
+(use '[clojure.contrib.math :only (expt)])
+
+(defn p16
+  "Solution to P16"
+  ([] (p16 1000))
+  ([n]
+     (->> (expt 2M n)
+          (str)
+          (seq)
+          (map (comp #(Integer/valueOf %) str))
+          (apply +))))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Previous solution (march 2012)
 
 (defn p16-1 []
   (let [n (expt (bigdec 2) 1000)
@@ -11,5 +25,3 @@
         digits-str (map str (vec n-str))
         digits (map #(Integer/valueOf %) digits-str)]
     (prn (reduce + digits))))
-        
-

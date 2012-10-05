@@ -1,7 +1,6 @@
 ;Work out the first ten digits of the sum of the following one-hundred 50-digit numbers.
 
-(ns euler.p13
-  (:use [clojure.contrib.str-utils2 :only (split-lines)]))
+(require '[clojure.string :as str])
 
 (def n
 "37107287533902102798797998220837590246510135740250
@@ -105,8 +104,29 @@
 20849603980134001723930671666823555245252804609722
 53503534226472524250874054075591789781264330331690")
 
-(defn p13[]
-  (let [coll-str (split-lines n)
+
+(defn p13
+  "Solution to P13"
+  []
+  (->> num
+       (str/split-lines)
+       (map #(BigInteger. %))
+       (reduce +)
+       (str)
+       (take 10)
+       (str/join)))
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Previous solution
+
+(defn p13-1
+  []
+  (let [coll-str (str/split-lines n)
         coll-nr (map #(BigInteger. %) coll-str)
         sum (reduce + coll-nr)]
     (apply str (take 10 (.toString sum)))))

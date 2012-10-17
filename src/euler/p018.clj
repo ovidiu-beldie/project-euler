@@ -30,6 +30,8 @@
 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23")
 
 (defn format-triangle
+  "Transforms the triangle's string representation to
+a seq of vecs"
   ([] (format-triangle triangle))
   ([tr]
      (let [format-row (fn [row]
@@ -42,10 +44,11 @@
             (str/join)
             (str/split-lines)
             (map format-row)
-            (map vec)
-            ))))
+            (map vec)))))
 
 (defn reducer
+  "Takes 2 vecs representing consecutive rows. Adds to each element of the
+second row the greater between its 2 neighbours from the preceding row"
   [r1 r2]
   (let [r2-indexed (->> r2
                         (interleave (iterate inc 0))
@@ -56,6 +59,7 @@
     (reduce add-max [] r2-indexed)))
 
 (defn p18
+  "Solution to P18"
   ([] (p18 triangle))
   ([t]
      (->> t

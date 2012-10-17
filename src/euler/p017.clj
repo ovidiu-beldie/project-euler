@@ -9,40 +9,67 @@
 ;writing out numbers is in compliance with British usage.
 
 
-(def one-19 ["one" "two" "three" "four" "five" "six" "seven" "eight"
+(def one-19 ["" "one" "two" "three" "four" "five" "six" "seven" "eight"
             "nine" "ten" "eleven" "twelve" "thirteen" "fourteen" "fifteen"
             "sixteen" "seventeen" "eighteen" "nineteen"])
 
-(def tens ["twenty" "thirty" "fourty" "fifty" "sixty" "seventy" "eighty" "ninty"])
+(def tens ["" "" "twenty" "thirty" "forty" "fifty" "sixty" "seventy" "eighty" "ninety"])
 
 
 
 (defn process-letter-format
-  [coll start step]
-  (let [stop (+ start (count coll) 1)]
+  [coll]
+  (let [stop (inc (count coll))]
     (->> coll
          (map count)
-         (interleave (range start stop step))
+         (interleave (range stop))
          (apply hash-map))))
+
+(def memo-proc-letter-format (memoize process-letter-format))
+
+(def map-len-1-19 (memo-proc-letter-format one-19))
+(def map-len-10s (memo-proc-letter-format tens))
 
 
 (defn thousands
+  "Computes the length of the thousands' part of a numeral expressed in letters.
+Here a simplification has been made according to the problem's requirements
+(we will only handle the number 1000)"
   [n]
-  (if (= n 1000) 11 0))
+  (if (= n 1000) 11 0))                 ;length of "one thousand" = 11
 
 (defn hundreds
-  [n m]
-  (let [hundred-len 7
-        mult (m (long (/ n 100)) 0)
-        and-len (if (zero? (mod n 100)) 0 3)]
-    (if (zero? mult)
-      0
-      (+ mult hundred-len and-len))))
+  "Computes the length of the hundreds' part of a numeral expressed in letters"
+  ([n] (hundreds n map-len-1-19))
+  ([n m]
+     (let [hundred-len 7                   ;length of "hundred" = 7
+           digit (mod (long (/ n 100)) 10) ;the digit for the "hundreds" position
+           and-len (if (zero? (mod n 100)) 0 3)]
+       (if (zero? digit)
+         0
+         (+ (m digit) hundred-len and-len)))))
 
-(defn tens-&-units
-  [n m1 m2]
-  )
+(defn tens-and-units
+  "Computes the length of the tens and units parts of a numeral expressed in letters"
+  ([n] (tens-and-units n map-len-1-19 map-len-10s))
+  ([n m1 m2]
+     (let [xy (mod n 100)]
+       (if (< xy 20)
+         (m1 xy)
+         (+ (m2 (long (/ xy 10)))
+            (m1 (mod xy 10)))))))
 
+(defn length-in-letters
+  "Computes the length of the number n when expressed in letters"
+  [n]
+  (+ (thousands n) (hundreds n) (tens-and-units n)))
+
+
+(defn p17
+  "Solution to P17"
+  ([] (p17 1 1000))
+  ([start stop]
+     (reduce + (map length-in-letters (range start (inc stop))))))
 
 
 

@@ -14,7 +14,7 @@
 ;Find the sum of all the positive integers which cannot be written as the sum of two abundant
 ;numbers.
 
-(use '[euler.primes :only (factorize)])
+(use '[euler.primes :only (memo-factorize)])
 (require '[clojure.contrib.combinatorics :as c])
 
 (defn proper-divisors
@@ -22,7 +22,7 @@
 Something similar was done for P12 but it's good exercise to do it again."
   [n]
   (->> n
-       (factorize)
+       (memo-factorize)
        (reduce #(into %1 (repeat (val %2) (key %2))) [])
        (c/subsets)
        (distinct)
@@ -34,13 +34,28 @@ Something similar was done for P12 but it's good exercise to do it again."
   [n]
   (> (reduce + (proper-divisors n)) n))
 
+(defn diff-sorted-ints
+  "Removes unwanted from all. The 2 colls must be sorted sets of ints."
+  [all unwanted]
+  (loop [res [], xs all, us unwanted]
+    (if (nil? xs)
+      res
+      (cond
+       (= (first xs) (first us)) (recur res (next xs) (next us))
+       :else (recur (conj res (first xs)) (next xs) us)))))
+
 (defn p23
+  "Solution for P23"
   ([] (p23 28123))
   ([n]
-     (let [abund-nums (filter abundant? (range 1 n))
-           abund-sums (for [x abund-nums y (take-while #(<= % x) abund-nums)
-                            :let [s (+ x y)] :when (< s n)] s)]
-       (reduce + (remove (set abund-sums) (range 1 n))))))
+     (let [ints (range 1 n)
+           abund-ns (filter abundant? ints)
+           abund-sums (for [x abund-ns, y (take-while #(<= % x) abund-ns)
+                               :let [s (+ x y)] :when (< s n)] s)]
+       (->> abund-sums
+            (apply sorted-set)
+            (diff-sorted-ints ints)
+            (reduce +)))))
 
 
 

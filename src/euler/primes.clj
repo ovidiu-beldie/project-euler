@@ -22,14 +22,35 @@
   "Computes the prime factors of the supplied int. Returns a map with
 the prime factors as keys and their respective cardinality as keys"
   [num]
-  (let [div? (fn [n d] (zero? (mod n d)))]
-    ;the loop extracts the prime factors by repeated divisions with increasing
-    ;divisors starting at 2
-    (loop [n num, d 2, fs []]
+   ;the loop extracts the prime factors by repeated divisions with increasing
+   ;divisors starting at 2
+  (loop [n num, d 2, fs []]
+    (cond
+     (< n 2) (frequencies fs)
+     (zero? (mod n d)) (recur (/ n d) 2 (conj fs d))
+     :else (recur n (inc d) fs))))
+
+(declare m-fact)
+
+(defn fact
+  "Computes the argument's prime factors. Recursive by calling a memoized version
+of itself."
+  [num]
+  (if (< num 2)
+    []
+    (loop [d 2]
       (cond
-       (< n 2) (frequencies fs)
-       (div? n d) (recur (/ n d) 2 (conj fs d))
-       :else (recur n (inc d) fs)))))
+       (zero? (mod num d)) (cons d (m-fact (/ num d)))
+       :else (recur (inc d))))))
+
+(def m-fact (memoize fact))
+
+(defn memo-factorize
+  "Computes the prime factors of the supplied int. Returns a map with
+the prime factors as keys and their respective cardinality as keys.
+Uses a memoized function to compute the prime factors."
+  [num]
+  (frequencies (m-fact num)))
 
 (def primes-div (primes-by-divs))
 

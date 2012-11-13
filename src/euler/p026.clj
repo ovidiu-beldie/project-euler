@@ -19,11 +19,9 @@
 
 (require '[clojure.string :as str])
 
-(def min-prec 50)
-
 (defn flc
   "Finds the longest recurring cycle for divisor d"
-  ([d] (flc d min-prec))
+  ([d] (flc d 50))
   ([d p]
      (let [s (->> (/ 1M d)
                   (with-precision p :rounding FLOOR)
@@ -40,6 +38,7 @@
               :else (recur (inc n)))))))))
 
 (defn p26
+  "Solution to P26"
   ([] (p26 2 1000))
   ([start end]
      (let [ red (fn [max curr]

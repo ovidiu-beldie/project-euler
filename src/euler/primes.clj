@@ -5,7 +5,11 @@
 (defn prime?
   "Returns true if n is prime, false otherwise"
   [n]
-  (not-any? #(zero? (mod n %)) (range 2 (inc ( Math/sqrt n)))))
+  (cond
+   (< n 2) false
+   (= n 2) true
+   (zero? (mod n 2)) false
+   :else (not-any? #(zero? (mod n %)) (range 2 (inc (Math/sqrt n))))))
 
 (defn next-prime
   "Returns the first prime which is greater than n"

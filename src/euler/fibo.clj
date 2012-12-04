@@ -4,7 +4,7 @@
   "Returns a lazy seq of the Fibonacci numbers"
   []
   (let [fib (fn [[a b]] [b (+ a b)])]
-    (map first (iterate fib [0 1]))))
+    (map first (iterate fib [0 1N]))))
 
 (defn fibo-1
   "Returns a lazy seq of the Fibonacci numbers"

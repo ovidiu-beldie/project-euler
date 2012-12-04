@@ -24,7 +24,7 @@
 
 (defn factorize
   "Computes the prime factors of the supplied int. Returns a map with
-the prime factors as keys and their respective cardinality as keys"
+the prime factors as keys and their respective cardinality as vals"
   [num]
    ;the loop extracts the prime factors by repeated divisions with increasing
    ;divisors starting at 2
